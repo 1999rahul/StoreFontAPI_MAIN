@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'store',
     'tags'
 ]
@@ -77,8 +78,11 @@ WSGI_APPLICATION = 'StoreFront.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'storefont',
+        'USER': 'root',
+        'PASSWORD': '20842085',
+        'HOST': 'localhost',
     }
 }
 
