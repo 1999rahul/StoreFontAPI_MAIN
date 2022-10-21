@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal
 from .models import Product,Collection,Customer,Review
-
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model=Collection
