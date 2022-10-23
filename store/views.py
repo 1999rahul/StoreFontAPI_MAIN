@@ -1,37 +1,36 @@
-from rest_framework.decorators import api_view
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Product
-from .serializers import ProductSerializer
-@api_view(['GET','POST'])
-def product_list(request):
-    if request.method=='GET':
-        queryset = Product.objects.all()
-        serializer = ProductSerializer(queryset, many=True)
-        return Response(serializer.data)
-    elif request.method=='POST':
-        serializer=ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-@api_view(['GET','PUT','DELETE'])
-def product_detail(request, id):
-    product=get_object_or_404(Product,pk=id)
-    if request.method=='GET':
-             serializer = ProductSerializer(product)
-             return Response(serializer.data)
-    elif request.method=='PUT':
-        serializer=ProductSerializer(product,data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
-    elif request.method=='DELETE':
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter,OrderingFilter
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import ModelViewSet,GenericViewSet
+from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
+from .models import Product,Review,Cart,CartItem
+from .serializers import ProductSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
+    pagination_class = PageNumberPagination
+    filterset_fields=['collection_id']
+    search_fields=['title','description']
+    ordering_fields=['price']
 
 
+class ReviewViewSet(ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+class CartViewSet(CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,GenericViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+class CaerItemViewSet(ModelViewSet):
+    def get_serializer_class(self):
+        if self.request.method=='POST':
+            return AddCartItemSerializer
+        elif self.request.method=='GET':
+            return CartItemSerializer
+    def get_serializer_context(self):
+        return {'cart_id':self.kwargs['cart_pk']}
+    def get_queryset(self):
+        return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
 
 # Create your views here.
