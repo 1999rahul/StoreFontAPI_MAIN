@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'store',
-    'tags'
+    'tags',
+    'core'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +81,7 @@ WSGI_APPLICATION = 'StoreFront.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'storefont',
+        'NAME': 'storefont2',
         'USER': 'root',
         'PASSWORD': '20842085',
         'HOST': 'localhost',
@@ -133,3 +134,5 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
     'PAGE_SIZE':5
 }
+AUTH_USER_MODEL='core.User'
+
