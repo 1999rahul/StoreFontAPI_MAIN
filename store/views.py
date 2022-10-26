@@ -3,8 +3,8 @@ from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
-from .models import Product,Review,Cart,CartItem
-from .serializers import ProductSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer
+from .models import Product,Review,Cart,CartItem,Customer
+from .serializers import ProductSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -14,7 +14,9 @@ class ProductViewSet(ModelViewSet):
     filterset_fields=['collection_id']
     search_fields=['title','description']
     ordering_fields=['price']
-
+class CustomerViewSet(CreateModelMixin,RetrieveModelMixin,GenericViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()

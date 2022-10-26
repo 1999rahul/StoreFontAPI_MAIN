@@ -6,9 +6,10 @@ class CollectionSerializer(serializers.ModelSerializer):
         model=Collection
         fields=['id','title']
 class CustomerSerializer(serializers.ModelSerializer):
+    user_id=serializers.IntegerField()
     class Meta:
         model=Customer
-        fields=['id','first_name']
+        fields=['id','user_id','phone','birth_date','membership']
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
