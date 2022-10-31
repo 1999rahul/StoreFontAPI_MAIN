@@ -7,8 +7,8 @@ from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
-from .models import Product,Review,Cart,CartItem,Customer
-from .serializers import ProductSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer
+from .models import Product,Review,Cart,CartItem,Customer,Order,OrderItem
+from .serializers import ProductSerializer,ReviewSerializer,CartSerializer,CartItemSerializer,AddCartItemSerializer,UpdateCartItemSerializer,CustomerSerializer,OrderSerializer,CreateOrderSerializer
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -56,5 +56,26 @@ class CartItemViewSet(ModelViewSet):
         return {'cart_id':self.kwargs['cart_pk']}
     def get_queryset(self):
         return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
+
+class OrdersViewSet(ModelViewSet):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+    def get_serializer_context(self):
+        return {'user_id':self.request.user.id}
+    def get_serializer_class(self):
+        if self.request.method=='GET':
+            return OrderSerializer
+        return CreateOrderSerializer
+
+
+    def get_queryset(self):
+        user=self.request.user
+        if user.is_staff:
+            return Order.objects.all()
+
+        customer_id,_=Customer.objects.only('id').get_or_create(user_id=user.id)
+        return Order.objects.filter(customer_id=customer_id)
+
+
 
 # Create your views here.
